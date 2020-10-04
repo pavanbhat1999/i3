@@ -8,7 +8,6 @@
  *
  */
 #include "common.h"
-#include "windowtitle.h"
 
 #include <stdlib.h>
 #include <stdio.h>

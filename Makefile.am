@@ -399,6 +399,7 @@ i3bar_i3bar_SOURCES = \
 	i3bar/include/configuration.h \
 	i3bar/include/ipc.h \
 	i3bar/include/mode.h \
+	i3bar/include/windowtitle.h \
 	i3bar/include/outputs.h \
 	i3bar/include/parse_json_header.h \
 	i3bar/include/trayclients.h \
@@ -411,6 +412,7 @@ i3bar_i3bar_SOURCES = \
 	i3bar/src/ipc.c \
 	i3bar/src/main.c \
 	i3bar/src/mode.c \
+	i3bar/src/windowtitle.c \
 	i3bar/src/outputs.c \
 	i3bar/src/parse_json_header.c \
 	i3bar/src/workspaces.c \

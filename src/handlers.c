@@ -571,7 +571,7 @@ static bool handle_windowname_change(void *data, xcb_connection_t *conn, uint8_t
 
     x_push_changes(croot);
 
-    if (window_name_changed(con->window, old_name))
+    if (window_name_changed(con->window, old_name)) {
         ipc_send_window_event("title", con);
         if (con == focused) ipc_send_windowtitle_event(con);
     }
@@ -600,7 +600,7 @@ static bool handle_windowname_change_legacy(void *data, xcb_connection_t *conn, 
 
     x_push_changes(croot);
 
-    if (window_name_changed(con->window, old_name))
+    if (window_name_changed(con->window, old_name)) {
         ipc_send_window_event("title", con);
         if (con == focused) ipc_send_windowtitle_event(con);
     }

@@ -15,7 +15,7 @@
 
 #include "common.h"
 
-/* Name of current binding mode and its render width */
+/* Name of current windowtitle and its render width */
 struct windowtitle {
     i3String *name;
     int name_width;
@@ -24,7 +24,7 @@ struct windowtitle {
 typedef struct windowtitle windowtitle;
 
 /*
- * Start parsing the received JSON string
+ * Send windowtitle string
  *
  */
 void parse_windowtitle_str(char *str);
