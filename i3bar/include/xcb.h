@@ -143,3 +143,5 @@ void redraw_bars(void);
  *
  */
 void set_current_mode(struct mode *mode);
+
+void set_current_windowtitle(struct windowtitle *windowtitle);

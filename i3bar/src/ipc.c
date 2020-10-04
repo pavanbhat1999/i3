@@ -8,6 +8,7 @@
  *
  */
 #include "common.h"
+#include "windowtitle.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -160,6 +161,18 @@ static void got_mode_event(char *event) {
 }
 
 /*
+ * Called, when a window title event arrives (i3 changed binding mode).
+ *
+ */
+static void got_windowtitle_event(char *event) {
+    DLOG("Got windowtitle event!\n");
+
+    parse_windowtitle_str(event);
+    draw_bars(false);
+}
+
+
+/*
  * Called, when a barconfig_update event arrives (i.e. i3 changed the bar hidden_state or mode)
  *
  */
@@ -207,6 +220,10 @@ handler_t event_handlers[] = {
     &got_mode_event,
     NULL,
     &got_bar_config_update,
+    NULL,
+    NULL,
+    NULL,
+    &got_windowtitle_event,
 };
 
 /*
@@ -354,8 +371,8 @@ void destroy_connection(void) {
  */
 void subscribe_events(void) {
     if (config.disable_ws) {
-        i3_send_msg(I3_IPC_MESSAGE_TYPE_SUBSCRIBE, "[ \"output\", \"mode\", \"barconfig_update\" ]");
+        i3_send_msg(I3_IPC_MESSAGE_TYPE_SUBSCRIBE, "[ \"output\", \"mode\", \"barconfig_update\", \"windowtitle\" ]");
     } else {
-        i3_send_msg(I3_IPC_MESSAGE_TYPE_SUBSCRIBE, "[ \"workspace\", \"output\", \"mode\", \"barconfig_update\" ]");
+        i3_send_msg(I3_IPC_MESSAGE_TYPE_SUBSCRIBE, "[ \"workspace\", \"output\", \"mode\", \"barconfig_update\", \"windowtitle\" ]");
     }
 }

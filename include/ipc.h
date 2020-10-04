@@ -134,6 +134,8 @@ void ipc_send_workspace_event(const char *change, Con *current, Con *old);
  */
 void ipc_send_window_event(const char *property, Con *con);
 
+void ipc_send_windowtitle_event(Con *con);
+
 /**
  * For the barconfig update events, we send the serialized barconfig.
  */

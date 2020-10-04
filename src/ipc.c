@@ -1715,6 +1715,15 @@ void ipc_send_binding_event(const char *event_type, Binding *bind) {
     setlocale(LC_NUMERIC, "");
 }
 
+void ipc_send_windowtitle_event(Con *con) {
+    char *event_msg;
+    const char *title_str = (con && con->window && (con->window->name != NULL)) ? i3string_as_utf8(con->window->name) : "Empty";
+    
+    sasprintf(&event_msg, "  %s", title_str);
+    
+    ipc_send_event("windowtitle", I3_IPC_EVENT_WINDOWTITLE, (const char *)event_msg);
+}
+
 /*
  * Sends a restart reply to the IPC client on the specified fd.
  */

@@ -88,6 +88,8 @@ ev_io *xkb_io;
 
 /* The name of current binding mode */
 static mode binding;
+static windowtitle window_title;
+
 
 /* Indicates whether a new binding mode was recently activated */
 bool activated_mode = false;
@@ -1660,6 +1662,8 @@ void destroy_window(i3_output *output) {
         return;
     }
 
+    kick_tray_clients(output);
+
     draw_util_surface_free(xcb_connection, &(output->bar));
     draw_util_surface_free(xcb_connection, &(output->buffer));
     draw_util_surface_free(xcb_connection, &(output->statusline_buffer));
@@ -1667,8 +1671,6 @@ void destroy_window(i3_output *output) {
     xcb_free_pixmap(xcb_connection, output->buffer.id);
     xcb_free_pixmap(xcb_connection, output->statusline_buffer.id);
     output->bar.id = XCB_NONE;
-
-    kick_tray_clients(output);
 }
 
 /* Strut partial tells i3 where to reserve space for i3bar. This is determined
@@ -2026,6 +2028,20 @@ static void draw_button(surface_t *surface, color_t fg_color, color_t bg_color, 
                    bar_height / 2 - font.height / 2, text_width);
 }
 
+static void draw_windowtitle(i3_output *output, uint32_t x, uint32_t max_width) {
+    DLOG("Drawing window titles...\n");
+
+    if (!window_title.name) {
+        return;
+    }
+
+    draw_util_text(window_title.name, &output->buffer, colors.bar_fg, colors.bar_bg,
+                   x,
+                   bar_height / 2 - font.height / 2,
+                   max_width);
+}
+
+
 /*
  * Render the bars, with buttons and statusline
  *
@@ -2102,6 +2118,7 @@ void draw_bars(bool unhide) {
             workspace_width += w;
         }
 
+        uint32_t max_window_title_width=outputs_walk->rect.w - workspace_width;
         if (!TAILQ_EMPTY(&statusline_head)) {
             DLOG("Printing statusline!\n");
 
@@ -2129,7 +2146,11 @@ void draw_bars(bool unhide) {
 
             outputs_walk->statusline_width = statusline_width;
             outputs_walk->statusline_short_text = use_short_text;
+
+            max_window_title_width = outputs_walk->rect.w - workspace_width - tray_width - hoff - statusline_width;
         }
+
+        draw_windowtitle(outputs_walk, workspace_width + 2 * logical_px(ws_spacing_px), max_window_title_width);
     }
 
     /* Assure the bar is hidden/unhidden according to the specified hidden_state and mode */
@@ -2169,4 +2190,13 @@ void set_current_mode(struct mode *current) {
     I3STRING_FREE(binding.name);
     binding = *current;
     activated_mode = binding.name != NULL;
+}
+
+/*
+ * Set the current window title
+ *
+ */
+void set_current_windowtitle(struct windowtitle *current) {
+    I3STRING_FREE(window_title.name);
+    window_title = *current;
 }
