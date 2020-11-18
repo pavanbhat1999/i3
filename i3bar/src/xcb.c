@@ -2123,7 +2123,8 @@ void draw_bars(bool unhide) {
             max_window_title_width = outputs_walk->rect.w - workspace_width - tray_width - hoff - statusline_width;
         }
 
-        draw_windowtitle(outputs_walk, workspace_width + 2 * logical_px(ws_spacing_px), (use_focus_colors ? colors.focus_bar_fg : colors.inactive_ws_fg), max_window_title_width);
+        
+        draw_windowtitle(outputs_walk, workspace_width + 4 * logical_px(ws_spacing_px), (use_focus_colors ? colors.focus_bar_fg : colors.inactive_ws_fg), max_window_title_width - 4 * logical_px(ws_spacing_px));
     }
 
     /* Assure the bar is hidden/unhidden according to the specified hidden_state and mode */

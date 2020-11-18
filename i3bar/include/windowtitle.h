@@ -27,4 +27,4 @@ typedef struct windowtitle windowtitle;
  * Start parsing the received JSON string
  *
  */
-void parse_windowtitle_str(char *str);
+void parse_windowtitle_json(char *str);
