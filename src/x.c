@@ -1324,8 +1324,11 @@ void x_push_changes(Con *con) {
 
                 change_ewmh_focus((con_has_managed_window(focused) ? focused->window->id : XCB_WINDOW_NONE), last_focused);
 
-                if (to_focus != last_focused && is_con_attached(focused))
+                if (to_focus != last_focused && is_con_attached(focused)) {
                     ipc_send_window_event("focus", focused);
+                    ipc_send_windowtitle_event(focused);
+                }
+                
             } else {
                 DLOG("Updating focus (focused: %p / %s) to X11 window 0x%08x\n", focused, focused->name, to_focus);
                 /* We remove XCB_EVENT_MASK_FOCUS_CHANGE from the event mask to get
@@ -1343,8 +1346,10 @@ void x_push_changes(Con *con) {
 
                 change_ewmh_focus((con_has_managed_window(focused) ? focused->window->id : XCB_WINDOW_NONE), last_focused);
 
-                if (to_focus != XCB_NONE && to_focus != last_focused && focused->window != NULL && is_con_attached(focused))
+                if (to_focus != XCB_NONE && to_focus != last_focused && focused->window != NULL && is_con_attached(focused)) {
                     ipc_send_window_event("focus", focused);
+                    ipc_send_windowtitle_event(focused);
+                }
             }
 
             focused_id = last_focused = to_focus;
@@ -1360,6 +1365,8 @@ void x_push_changes(Con *con) {
 
         focused_id = ewmh_window;
         last_focused = XCB_NONE;
+
+        ipc_send_windowtitle_event(focused);
     }
 
     xcb_flush(conn);

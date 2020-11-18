@@ -567,9 +567,12 @@ static bool handle_windowname_change(Con *con, xcb_get_property_reply_t *prop) {
 
     x_push_changes(croot);
 
-    if (window_name_changed(con->window, old_name))
+    if (window_name_changed(con->window, old_name)) {
         ipc_send_window_event("title", con);
 
+        if (con == focused) ipc_send_windowtitle_event(con);
+    }
+    
     FREE(old_name);
 
     return true;
@@ -589,8 +592,11 @@ static bool handle_windowname_change_legacy(Con *con, xcb_get_property_reply_t *
 
     x_push_changes(croot);
 
-    if (window_name_changed(con->window, old_name))
+    if (window_name_changed(con->window, old_name)) {
         ipc_send_window_event("title", con);
+
+        if (con == focused) ipc_send_windowtitle_event(con);
+    }
 
     FREE(old_name);
 

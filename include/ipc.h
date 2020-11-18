@@ -131,6 +131,11 @@ void ipc_send_window_event(const char *property, Con *con);
 void ipc_send_barconfig_update_event(Barconfig *barconfig);
 
 /**
+ * For the windowtitle event we send.
+ */
+void ipc_send_windowtitle_event(Con *con);
+
+/**
  * For the binding events, we send the serialized binding struct.
  */
 void ipc_send_binding_event(const char *event_type, Binding *bind);
