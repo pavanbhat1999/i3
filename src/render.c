@@ -72,6 +72,15 @@ void render_con(Con *con, bool already_inset) {
         inset.height = 0;
         if (con->deco_rect.width != 0 && con->deco_rect.height != 0) {
             con->deco_rect = rect_add(con->deco_rect, inset);
+
+            if(!has_adjacent_container(con, D_DOWN)) {
+                con->deco_rect.y -= gaps.bottom;
+            }
+            if (!has_adjacent_container(con, D_UP)) {
+                con->deco_rect.y -= gaps.top;
+            }
+
+            con->deco_rect.y -= (has_adjacent_container(con, D_UP) + has_adjacent_container(con, D_DOWN)) *gaps.inner;
         }
 
         params.x = con->rect.x;
@@ -405,10 +414,11 @@ static void render_con_split(Con *con, Con *child, render_params *p, int i) {
         if (child->border_style == BS_NORMAL) {
             /* TODO: make a function for relative coords? */
             child->deco_rect.x = child->rect.x - con->rect.x;
-            child->deco_rect.y = child->rect.y - con->rect.y;
+            // child->deco_rect.y = child->rect.y - con->rect.y;
 
-            child->rect.y += p->deco_height;
+            // child->rect.y += p->deco_height;
             child->rect.height -= p->deco_height;
+            child->deco_rect.y = child->rect.y - con->rect.y + child->rect.height;
 
             child->deco_rect.width = child->rect.width;
             child->deco_rect.height = p->deco_height;
@@ -435,7 +445,7 @@ static void render_con_stacked(Con *con, Con *child, render_params *p, int i) {
     child->deco_rect.height = p->deco_height;
 
     if (p->children > 1 || (child->border_style != BS_PIXEL && child->border_style != BS_NONE)) {
-        child->rect.y += (p->deco_height * p->children);
+        // child->rect.y += (p->deco_height * p->children);
         child->rect.height -= (p->deco_height * p->children);
     }
 }
@@ -459,7 +469,7 @@ static void render_con_tabbed(Con *con, Con *child, render_params *p, int i) {
     }
 
     if (p->children > 1 || (child->border_style != BS_PIXEL && child->border_style != BS_NONE)) {
-        child->rect.y += p->deco_height;
+        // child->rect.y += p->deco_height;
         child->rect.height -= p->deco_height;
         child->deco_rect.height = p->deco_height;
     } else {

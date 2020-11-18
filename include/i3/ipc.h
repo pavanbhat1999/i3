@@ -116,3 +116,6 @@ typedef struct i3_ipc_header {
 
 /** The tick event will be sent upon a tick IPC message */
 #define I3_IPC_EVENT_TICK (I3_IPC_EVENT_MASK | 7)
+
+/** The tick event will be sent upon a tick IPC message */
+#define I3_IPC_EVENT_WINDOWTITLE (I3_IPC_EVENT_MASK | 8)

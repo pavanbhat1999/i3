@@ -74,6 +74,9 @@ ev_io *xkb_io;
 /* The name of current binding mode */
 static mode binding;
 
+/* The name of current window title */
+static windowtitle window_title;
+
 /* Indicates whether a new binding mode was recently activated */
 bool activated_mode = false;
 
@@ -1996,6 +1999,23 @@ static void draw_button(surface_t *surface, color_t fg_color, color_t bg_color, 
 }
 
 /*
+ * Draw the current window title.
+ *
+ */
+static void draw_windowtitle(i3_output *output, uint32_t x, color_t fg_color, uint32_t max_width) {
+    DLOG("Drawing window titles...\n");
+
+    if (!window_title.name) {
+        return;
+    }
+
+    draw_util_text(window_title.name, &output->buffer,  fg_color, colors.bar_bg,
+                   x,
+                   bar_height / 2 - font.height / 2,
+                   max_width);
+}
+
+/*
  * Render the bars, with buttons and statusline
  *
  */
@@ -2071,6 +2091,8 @@ void draw_bars(bool unhide) {
             workspace_width += w;
         }
 
+         uint32_t max_window_title_width=outputs_walk->rect.w - workspace_width;
+
         if (!TAILQ_EMPTY(&statusline_head)) {
             DLOG("Printing statusline!\n");
 
@@ -2098,7 +2120,12 @@ void draw_bars(bool unhide) {
 
             outputs_walk->statusline_width = statusline_width;
             outputs_walk->statusline_short_text = use_short_text;
+
+            max_window_title_width = outputs_walk->rect.w - workspace_width - tray_width - hoff - statusline_width;
         }
+
+        
+        draw_windowtitle(outputs_walk, workspace_width + 4 * logical_px(ws_spacing_px), (use_focus_colors ? colors.focus_bar_fg : colors.inactive_ws_fg), max_window_title_width - 4 * logical_px(ws_spacing_px));
     }
 
     /* Assure the bar is hidden/unhidden according to the specified hidden_state and mode */
@@ -2138,4 +2165,13 @@ void set_current_mode(struct mode *current) {
     I3STRING_FREE(binding.name);
     binding = *current;
     activated_mode = binding.name != NULL;
+}
+
+/*
+ * Set the current window title
+ *
+ */
+void set_current_windowtitle(struct windowtitle *current) {
+    I3STRING_FREE(window_title.name);
+    window_title = *current;
 }

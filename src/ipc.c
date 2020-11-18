@@ -1732,6 +1732,34 @@ void ipc_send_binding_event(const char *event_type, Binding *bind) {
 }
 
 /*
+ * For the windowtitle event, we send the serialized binding struct.
+ */
+
+void ipc_send_windowtitle_event(Con *con) {
+    const char * title_str = (con && con->window && (con->window->name != NULL)) ? i3string_as_utf8(con->window->name) : "Empty";
+
+    setlocale(LC_NUMERIC, "C");
+
+    yajl_gen gen = ygenalloc();
+
+    y(map_open);
+
+    ystr("windowtitle");
+    ystr(title_str);
+
+    y(map_close);
+
+    const unsigned char *payload;
+    ylength length;
+    y(get_buf, &payload, &length);
+
+    ipc_send_event("windowtitle", I3_IPC_EVENT_WINDOWTITLE, (const char *)payload);
+
+    y(free);
+    setlocale(LC_NUMERIC, "");
+}
+
+/*
  * Sends a restart reply to the IPC client on the specified fd.
  */
 void ipc_confirm_restart(ipc_client *client) {

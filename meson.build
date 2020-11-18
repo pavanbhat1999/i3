@@ -497,6 +497,7 @@ executable(
     'i3bar/src/ipc.c',
     'i3bar/src/main.c',
     'i3bar/src/mode.c',
+    'i3bar/src/windowtitle.c',
     'i3bar/src/outputs.c',
     'i3bar/src/parse_json_header.c',
     'i3bar/src/workspaces.c',
