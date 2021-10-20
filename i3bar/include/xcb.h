@@ -148,4 +148,4 @@ void set_current_mode(struct mode *mode);
  * Set the current window title
  *
  */
-void set_current_windowtitle(struct windowtitle *windowtitle);
+void set_current_windowtitle(windowtitle *windowtitle);

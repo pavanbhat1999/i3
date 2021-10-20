@@ -1709,7 +1709,10 @@ void ipc_send_windowtitle_event(Con *con) {
     y(map_open);
 
     ystr("windowtitle");
-    ystr(title_str);
+    ystr(pango_escape_markup(sstrdup(title_str)));
+
+    ystr("is_pango_markup");
+    y(bool, font_is_pango());
 
     y(map_close);
 

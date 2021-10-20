@@ -7,7 +7,10 @@
  *
  */
 #include "common.h"
+#include "libi3.h"
+#include "windowtitle.h"
 
+#include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -16,11 +19,8 @@
 struct windowtitle_json_params {
     char *json;
     char *cur_key;
-    char* name;
-    bool pango_markup;
-    windowtitle * windowtitle;
+    windowtitle *title;
 };
-
 
 /*
  * Parse a string (change)
@@ -30,13 +30,25 @@ static int windowtitle_string_cb(void *params_, const unsigned char *val, size_t
     struct windowtitle_json_params *params = (struct windowtitle_json_params *)params_;
 
     if (!strcmp(params->cur_key, "windowtitle")) {
-        sasprintf(&(params->name), "%.*s", len, val);
+        char* str;
+        sasprintf(&(str), "%.*s", len, val);
+        params->title->name = i3string_from_utf8(str);
+        params->title->name_width = predict_text_width(params->title->name);
+        
+        FREE(str);
         FREE(params->cur_key);
         return 1;
     }
 
     FREE(params->cur_key);
     return 0;
+}
+
+static int windowtitle_boolean_cb(void *params_, int val) {
+    struct windowtitle_json_params *params = (struct windowtitle_json_params *)params_;
+    if (strcmp(params->cur_key, "is_pango_markup") == 0)
+        i3string_set_markup(params->title->name, val);
+    return 1;
 }
 
 /*
@@ -55,13 +67,7 @@ static int windowtitle_map_key_cb(void *params_, const unsigned char *keyVal, si
 static int windowtitle_end_map_cb(void *params_) {
     struct windowtitle_json_params *params = (struct windowtitle_json_params *)params_;
 
-    /* Save the name */
-    params->windowtitle->name = i3string_from_utf8(params->name);
-    i3string_set_markup(params->windowtitle->name, params->pango_markup);
-    /* Save its rendered width */
-    params->windowtitle->name_width = predict_text_width(params->windowtitle->name);
-
-    DLOG("Got windowtitle change: %s\n", i3string_as_utf8(params->windowtitle->name));
+    DLOG("Got windowtitle change: %s\n", i3string_as_utf8(params->title->name));
     FREE(params->cur_key);
 
     return 1;
@@ -70,6 +76,7 @@ static int windowtitle_end_map_cb(void *params_) {
 /* A datastructure to pass all these callbacks to yajl */
 static yajl_callbacks windowtitle_callbacks = {
     .yajl_string = windowtitle_string_cb,
+    .yajl_boolean = windowtitle_boolean_cb,
     .yajl_map_key = windowtitle_map_key_cb,
     .yajl_end_map = windowtitle_end_map_cb,
 };
@@ -85,10 +92,10 @@ void parse_windowtitle_json(char *json) {
     struct windowtitle_json_params params;
 
     windowtitle title;
-
+    
     params.cur_key = NULL;
     params.json = json;
-    params.windowtitle = &title;
+    params.title = &title;
 
     yajl_handle handle;
     yajl_status state;

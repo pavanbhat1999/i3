@@ -16,12 +16,12 @@
 #include "common.h"
 
 /* Name of current windowtitle and its render width */
-struct windowtitle {
+struct _windowtitle {
     i3String *name;
     int name_width;
 };
 
-typedef struct windowtitle windowtitle;
+typedef struct _windowtitle windowtitle;
 
 /*
  * Start parsing the received JSON string

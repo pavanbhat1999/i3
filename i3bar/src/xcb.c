@@ -2170,7 +2170,7 @@ void set_current_mode(struct mode *current) {
  * Set the current window title
  *
  */
-void set_current_windowtitle(struct windowtitle *current) {
+void set_current_windowtitle(windowtitle *current) {
     I3STRING_FREE(window_title.name);
     window_title = *current;
 }
