@@ -13,12 +13,21 @@
 
 #include <xcb/xproto.h>
 
-#include "common.h"
+#include <xcb/xcb.h>
+#include <xcb/xcb_aux.h>
+#include <xcb/xcb_icccm.h>
+#include <xcb/xcb_keysyms.h>
+
 
 /* Name of current windowtitle and its render width */
 struct _windowtitle {
+    xcb_window_t id;
+
     i3String *name;
     int name_width;
+
+    cairo_surface_t *icon;
+    uint32_t icon_size;
 };
 
 typedef struct _windowtitle windowtitle;

@@ -7,6 +7,7 @@
  * xcb.c: Communicating with X
  *
  */
+#include "cairo.h"
 #include "common.h"
 
 #include <err.h>
@@ -2002,13 +2003,22 @@ static void draw_button(surface_t *surface, color_t fg_color, color_t bg_color, 
  *
  */
 static void draw_windowtitle(i3_output *output, uint32_t x, color_t fg_color, uint32_t max_width) {
-    DLOG("Drawing window titles...\n");
-
+    DLOG("Drawing the windowtitle\n");
     if (!window_title.name) {
         return;
     }
 
-    draw_util_text(window_title.name, &output->buffer,  fg_color, colors.bar_bg,
+    if (window_title.icon != NULL && window_title.id != -1) {
+        ELOG("Drawing the windowtitle icon\n");
+        int icon_size = bar_height * 3 / 5;
+        int start_y = (bar_height - icon_size) / 2;
+        draw_util_image(window_title.icon, &output->buffer, x, start_y, icon_size, icon_size);
+
+        max_width -= icon_size + 3;
+        x += icon_size + 3;
+    }
+
+    draw_util_text(window_title.name, &output->buffer, fg_color, colors.bar_bg,
                    x,
                    bar_height / 2 - font.height / 2,
                    max_width);
@@ -2069,7 +2079,7 @@ void draw_bars(bool unhide) {
                     unhide = true;
                 }
 
-                int w = predict_button_width(ws_walk->name_width);
+                int w = predict_button_width(ws_walk->name_width) + 4;
                 draw_button(&(outputs_walk->buffer), fg_color, bg_color, border_color,
                             workspace_width, w, ws_walk->name_width, ws_walk->name);
 
@@ -2124,7 +2134,9 @@ void draw_bars(bool unhide) {
         }
 
         
-        draw_windowtitle(outputs_walk, workspace_width + 4 * logical_px(ws_spacing_px), (use_focus_colors ? colors.focus_bar_fg : colors.inactive_ws_fg), max_window_title_width - 4 * logical_px(ws_spacing_px));
+        draw_windowtitle(outputs_walk, workspace_width + 4 * logical_px(ws_spacing_px),
+            (use_focus_colors ? colors.focus_bar_fg : colors.inactive_ws_fg),
+            max_window_title_width - 4 * logical_px(ws_spacing_px));
     }
 
     /* Assure the bar is hidden/unhidden according to the specified hidden_state and mode */
@@ -2172,5 +2184,10 @@ void set_current_mode(struct mode *current) {
  */
 void set_current_windowtitle(windowtitle *current) {
     I3STRING_FREE(window_title.name);
+
+    if (window_title.id != -1 && window_title.icon != NULL) {
+        cairo_surface_destroy(window_title.icon);
+    }
+    
     window_title = *current;
 }

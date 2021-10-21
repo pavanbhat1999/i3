@@ -1695,10 +1695,10 @@ void ipc_send_binding_event(const char *event_type, Binding *bind) {
     setlocale(LC_NUMERIC, "");
 }
 
+
 /*
  * For the windowtitle event, we send the serialized binding struct.
  */
-
 void ipc_send_windowtitle_event(Con *con) {
     const char * title_str = (con && con->window && (con->window->name != NULL)) ? i3string_as_utf8(con->window->name) : "Empty";
 
@@ -1708,6 +1708,13 @@ void ipc_send_windowtitle_event(Con *con) {
 
     y(map_open);
 
+    ystr("xcb_window_id");
+    if (con && con->window && con->window->id) {
+        y(integer, con->window->id);
+    } else {
+        y(integer, -1);
+    }
+    
     ystr("windowtitle");
     ystr(pango_escape_markup(sstrdup(title_str)));
 
