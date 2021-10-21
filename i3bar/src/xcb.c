@@ -2079,7 +2079,7 @@ void draw_bars(bool unhide) {
                     unhide = true;
                 }
 
-                int w = predict_button_width(ws_walk->name_width) + 4;
+                int w = predict_button_width(ws_walk->name_width);
                 draw_button(&(outputs_walk->buffer), fg_color, bg_color, border_color,
                             workspace_width, w, ws_walk->name_width, ws_walk->name);
 
