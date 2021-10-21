@@ -1687,7 +1687,7 @@ Rect con_border_style_rect(Con *con) {
     if (border_style == BS_NONE)
         return (Rect){0, 0, 0, 0};
     if (border_style == BS_NORMAL) {
-        result = (Rect){border_width, 0, -(2 * border_width), -(border_width)};
+        result = (Rect){border_width, border_width, -(2 * border_width), -(border_width)};
     } else {
         result = (Rect){border_width, border_width, -(2 * border_width), -(2 * border_width)};
     }
