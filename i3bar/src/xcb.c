@@ -2010,7 +2010,7 @@ static void draw_windowtitle(i3_output *output, uint32_t x, color_t fg_color, ui
 
     if (window_title.icon != NULL && window_title.id != -1) {
         ELOG("Drawing the windowtitle icon\n");
-        int icon_size = bar_height * 3 / 5;
+        int icon_size = bar_height * 3 / 4;
         int start_y = (bar_height - icon_size) / 2;
         draw_util_image(window_title.icon, &output->buffer, x, start_y, icon_size, icon_size);
 
